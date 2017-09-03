@@ -4,11 +4,15 @@ contract Dice {
 
   uint public lastRoll;
 
-  function set(uint x) {
-    storedData = x;
+  function Dice() {
+    lastRoll = 1;
   }
 
-  function get() constant returns (uint) {
+  function set(uint x) {
+    lastRoll = x;
+  }
+
+  function getLastRoll() constant returns (uint) {
     return lastRoll;
   }
 
