@@ -12,5 +12,11 @@ contract TestDice {
     uint expected = 1;
     Assert.equal(dice.getLastRoll(), expected, "It should start at 1.");
   }
-  
+
+  function testCanSetLastRoll() {
+    uint expected = 6;
+    dice.set(6);
+    Assert.equal(dice.getLastRoll(), expected, "Should now be 6.");
+  }
+
 }
