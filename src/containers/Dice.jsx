@@ -3,6 +3,9 @@ import DiceContract from '../../build/contracts/Dice.json'
 
 import getWeb3 from './../utils/getWeb3';
 
+let contract = require('truffle-contract')
+let dice = contract(DiceContract)
+
 class Dice extends React.Component {
 
   constructor(props) {
@@ -11,6 +14,7 @@ class Dice extends React.Component {
     this.state = {
       web3: null,
       contract: null,
+      previousRoll: 0,
       lastRoll: 0,
       playerAddress: "0x39ba05291564d3f184c8ec24042f19a13b5b7d72",
       playerBalance: 0,
@@ -38,8 +42,6 @@ class Dice extends React.Component {
   }
 
   instantiateContract() {
-    const contract = require('truffle-contract')
-    const dice = contract(DiceContract)
     dice.setProvider(this.state.web3.currentProvider)
 
     var diceInstance;
@@ -95,15 +97,11 @@ class Dice extends React.Component {
   }
 
   setLastRoll(result) {
-    const contract = require('truffle-contract')
-    const dice = contract(DiceContract)
     dice.setProvider(this.state.web3.currentProvider)
-    var diceInstance;
 
     dice.deployed()
     .then((instance) => {
-      diceInstance = instance;
-      return diceInstance.set(result)
+      return this.state.contract.set(result)
     })
     .then(() => {
       this.setState({ lastRoll: result })
@@ -117,8 +115,6 @@ class Dice extends React.Component {
         <p>Last Roll: { this.state.lastRoll }</p>
         <p>House Balance: { this.state.playerBalance }</p>
         <p>Player Balance: { this.state.playerBalance }</p>
-        <button value="1" onClick={ this.setLastRoll }>1</button>
-        <button value="6" onClick={ this.setLastRoll }>6</button>
         <button value="higher" onClick={ this.rollDice }>Higher</button>
         <button value="lower" onClick={ this.rollDice }>Lower</button>
       </div>
