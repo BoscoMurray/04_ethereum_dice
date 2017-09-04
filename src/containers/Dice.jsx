@@ -61,17 +61,21 @@ class Dice extends React.Component {
 
   getBalances() {
     this.state.web3.eth.getBalance(this.state.playerAddress, (error, result) => {
-        if(!error)
-            return this.setState({ playerBalance: result.c[0] });
-        else
-            console.error(error);
+      if(!error) {
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        return this.setState({ playerBalance: balance });
+      } else {
+        console.error(error);
+      }
     })
 
     this.state.web3.eth.getBalance(this.state.houseAddress, (error, result) => {
-        if(!error)
-            return this.setState({ houseBalance: result.c[0] });
-        else
-            console.error(error);
+      if(!error) {
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        return this.setState({ houseBalance: balance });
+      } else {
+        console.error(error);
+      }
     })
   }
 
@@ -94,7 +98,8 @@ class Dice extends React.Component {
     }
   }
 
-  payWinner(winner) {
+  pay(payFrom, payTo, amount) {
+    // this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: web3.toWei(1, "ether")});
 
   }
 
@@ -105,11 +110,14 @@ class Dice extends React.Component {
     .then((instance) => {
       return this.state.contract.set(result)
     })
-    .then(() => {
+    .then((reply) => {
+      console.log(reply)
       const thisRoll = this.state.thisRoll;
       this.setState({ previousRoll: thisRoll })
       this.setState({ thisRoll: result })
     })
+    console.log(this.state.contract.address)
+
   }
 
   render() {
@@ -118,7 +126,7 @@ class Dice extends React.Component {
         <h1>Smart-Dice</h1>
         <p>Previous Roll: { this.state.previousRoll }</p>
         <p>This Roll: { this.state.thisRoll }</p>
-        <p>House Balance: { this.state.playerBalance }</p>
+        <p>House Balance: { this.state.houseBalance }</p>
         <p>Player Balance: { this.state.playerBalance }</p>
         <br></br>
         <p> {this.state.winOrLose} </p>
