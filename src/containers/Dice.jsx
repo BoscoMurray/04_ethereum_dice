@@ -15,7 +15,8 @@ class Dice extends React.Component {
       playerAddress: "0x39ba05291564d3f184c8ec24042f19a13b5b7d72",
       playerBalance: 0,
       houseAddress: "0x90510cec7e77d80cd6f60804b3ca556935cbcc8d",
-      houseBalance: 0
+      houseBalance: 0,
+      lastResult: null
     };
     this.setLastRoll = this.setLastRoll.bind(this);
   }
@@ -33,12 +34,6 @@ class Dice extends React.Component {
     .catch(() => {
       console.log('Error finding web3.')
     })
-    // .then(() => {
-    //   const tempWeb3 = this.state.web3;
-    //   tempWeb3.eth.defaultAccount = "0x68aa944b28982761c753e3b10d6a3d435e0f27c7"
-    //   this.setState({ web3: tempWeb3 })
-    // })
-
   }
 
   instantiateContract() {
@@ -59,7 +54,6 @@ class Dice extends React.Component {
         return this.setState({ lastRoll: result.c[0] })
       });
     })
-
   }
 
   getBalances() {
@@ -86,13 +80,13 @@ class Dice extends React.Component {
     var diceInstance;
 
     dice.deployed()
-    .then(function(instance) {
+    .then((instance) => {
       diceInstance = instance;
       return diceInstance.set(event.target.value)
     })
-    .then(function() {
+    .then(() => {
       this.setState({ lastRoll: event.target.value })
-    }.bind(this))
+    })
   }
 
   render() {
@@ -104,6 +98,8 @@ class Dice extends React.Component {
         <p>Player Balance: { this.state.playerBalance }</p>
         <button value="1" onClick={ this.setLastRoll }>1</button>
         <button value="6" onClick={ this.setLastRoll }>6</button>
+        <button value="higher" onClick={ this.setLastRoll }>Higher</button>
+        <button value="lower" onClick={ this.setLastRoll }>Lower</button>
       </div>
     )
   }
