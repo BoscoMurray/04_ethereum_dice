@@ -3,20 +3,20 @@ pragma solidity ^0.4.10;
 contract Dice {
 
   uint public previousRoll;
-  uint public lastRoll;
+  uint public thisRoll;
 
   function Dice() {
     previousRoll = 1;
-    lastRoll = 1;
+    thisRoll = 1;
   }
 
   function set(uint x) {
-    previousRoll = lastRoll;
-    lastRoll = x;
+    previousRoll = thisRoll;
+    thisRoll = x;
   }
 
-  function getLastRoll() constant returns (uint) {
-    return lastRoll;
+  function getThisRoll() constant returns (uint) {
+    return thisRoll;
   }
 
 }

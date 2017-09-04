@@ -15,14 +15,14 @@ class Dice extends React.Component {
       web3: null,
       contract: null,
       previousRoll: 0,
-      lastRoll: 0,
+      thisRoll: 0,
+      winOrLose: "Let's Start",
       playerAddress: "0x39ba05291564d3f184c8ec24042f19a13b5b7d72",
       playerBalance: 0,
       houseAddress: "0x90510cec7e77d80cd6f60804b3ca556935cbcc8d",
-      houseBalance: 0,
-      lastResult: null
+      houseBalance: 0
     };
-    this.setLastRoll = this.setLastRoll.bind(this);
+    this.setThisRoll = this.setThisRoll.bind(this);
     this.rollDice = this.rollDice.bind(this);
   }
 
@@ -51,10 +51,10 @@ class Dice extends React.Component {
       .then((instance) => {
         diceInstance = instance
         this.setState({ contract: diceInstance })
-        return diceInstance.getLastRoll.call(accounts[0])
+        return diceInstance.getThisRoll.call(accounts[0])
       })
       .then((result) => {
-        return this.setState({ lastRoll: result.c[0] })
+        return this.setState({ thisRoll: result.c[0] })
       });
     })
   }
@@ -79,16 +79,18 @@ class Dice extends React.Component {
     const guess = event.target.value;
     const result = Math.floor((Math.random() * 6) + 1);
     this.compareResult(guess, result);
-    this.setLastRoll(result);
+    this.setThisRoll(result);
   }
 
   compareResult(guess, result) {
-    if ( (guess==="higher") && (result>this.state.lastRoll) ) {
-      return true
-    } else if ( (guess==="lower") && (result<this.state.lastRoll) ) {
-      return true
+    if ( (guess==="higher") && (result>this.state.thisRoll) ) {
+      this.setState({ winOrLose: "Winner! You got paid!" })
+    } else if ( (guess==="lower") && (result<this.state.thisRoll) ) {
+      this.setState({ winOrLose: "Winner! You got paid!" })
+    } else if (result===this.state.thisRoll) {
+      this.setState({ winOrLose: "Same number rolled again! Sorry, you still lose!" })
     } else {
-      return false
+      this.setState({ winOrLose: "Sorry...you lose." })
     }
   }
 
@@ -96,7 +98,7 @@ class Dice extends React.Component {
 
   }
 
-  setLastRoll(result) {
+  setThisRoll(result) {
     dice.setProvider(this.state.web3.currentProvider)
 
     dice.deployed()
@@ -104,7 +106,9 @@ class Dice extends React.Component {
       return this.state.contract.set(result)
     })
     .then(() => {
-      this.setState({ lastRoll: result })
+      const thisRoll = this.state.thisRoll;
+      this.setState({ previousRoll: thisRoll })
+      this.setState({ thisRoll: result })
     })
   }
 
@@ -112,9 +116,12 @@ class Dice extends React.Component {
     return(
       <div className='Dice'>
         <h1>Smart-Dice</h1>
-        <p>Last Roll: { this.state.lastRoll }</p>
+        <p>Previous Roll: { this.state.previousRoll }</p>
+        <p>This Roll: { this.state.thisRoll }</p>
         <p>House Balance: { this.state.playerBalance }</p>
         <p>Player Balance: { this.state.playerBalance }</p>
+        <br></br>
+        <p> {this.state.winOrLose} </p>
         <button value="higher" onClick={ this.rollDice }>Higher</button>
         <button value="lower" onClick={ this.rollDice }>Lower</button>
       </div>
