@@ -24,6 +24,8 @@ class Dice extends React.Component {
     };
     this.setThisRoll = this.setThisRoll.bind(this);
     this.rollDice = this.rollDice.bind(this);
+    // this.pay = this.pay.bind(this);
+    // this.compareResult = this.compareResult.bind(this);
   }
 
   componentWillMount() {
@@ -87,20 +89,35 @@ class Dice extends React.Component {
   }
 
   compareResult(guess, result) {
+    const playerAddy = this.state.playerAddress;
+    const contractAddy = this.state.contract.address;
+    // const houseAddy = this.state.houseAddress;
+
     if ( (guess==="higher") && (result>this.state.thisRoll) ) {
-      this.setState({ winOrLose: "Winner! You got paid!" })
+      this.setState({ winOrLose: "Winner! You got paid!" }, () => {
+        this.pay(playerAddy, contractAddy, 10)
+      })
     } else if ( (guess==="lower") && (result<this.state.thisRoll) ) {
-      this.setState({ winOrLose: "Winner! You got paid!" })
+      this.setState({ winOrLose: "Winner! You got paid!" }, () => {
+        this.pay(playerAddy, contractAddy, 10)
+      })
     } else if (result===this.state.thisRoll) {
-      this.setState({ winOrLose: "Same number rolled again! Sorry, you still lose!" })
+      this.setState({ winOrLose: "Same number rolled again! Sorry, you still lose!" }, () => {
+        this.pay(playerAddy, contractAddy, 10)
+      })
     } else {
-      this.setState({ winOrLose: "Sorry...you lose." })
+      this.setState({ winOrLose: "Sorry...you lose." }, () => {
+        this.pay(playerAddy, contractAddy, 10)
+      })
     }
   }
 
   pay(payFrom, payTo, amount) {
-    // this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: web3.toWei(1, "ether")});
-
+    this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: this.state.web3.toWei(amount, "ether")}, function(err, transactionHash) {
+      if (!err) {
+        console.log(transactionHash);
+      }
+    });
   }
 
   setThisRoll(result) {
