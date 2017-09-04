@@ -19,6 +19,7 @@ class Dice extends React.Component {
       lastResult: null
     };
     this.setLastRoll = this.setLastRoll.bind(this);
+    this.rollDice = this.rollDice.bind(this);
   }
 
   componentWillMount() {
@@ -57,23 +58,43 @@ class Dice extends React.Component {
   }
 
   getBalances() {
-    this.state.web3.eth.getBalance(this.state.playerAddress, function(error, result){
+    this.state.web3.eth.getBalance(this.state.playerAddress, (error, result) => {
         if(!error)
             return this.setState({ playerBalance: result.c[0] });
         else
             console.error(error);
-    }.bind(this))
+    })
 
-    this.state.web3.eth.getBalance(this.state.houseAddress, function(error, result){
+    this.state.web3.eth.getBalance(this.state.houseAddress, (error, result) => {
         if(!error)
             return this.setState({ houseBalance: result.c[0] });
         else
             console.error(error);
-    }.bind(this))
+    })
   }
 
-  setLastRoll(event) {
-    event.persist();
+  rollDice(event) {
+    const guess = event.target.value;
+    const result = Math.floor((Math.random() * 6) + 1);
+    this.compareResult(guess, result);
+    this.setLastRoll(result);
+  }
+
+  compareResult(guess, result) {
+    if ( (guess==="higher") && (result>this.state.lastRoll) ) {
+      return true
+    } else if ( (guess==="lower") && (result<this.state.lastRoll) ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  payWinner(winner) {
+
+  }
+
+  setLastRoll(result) {
     const contract = require('truffle-contract')
     const dice = contract(DiceContract)
     dice.setProvider(this.state.web3.currentProvider)
@@ -82,10 +103,10 @@ class Dice extends React.Component {
     dice.deployed()
     .then((instance) => {
       diceInstance = instance;
-      return diceInstance.set(event.target.value)
+      return diceInstance.set(result)
     })
     .then(() => {
-      this.setState({ lastRoll: event.target.value })
+      this.setState({ lastRoll: result })
     })
   }
 
@@ -98,8 +119,8 @@ class Dice extends React.Component {
         <p>Player Balance: { this.state.playerBalance }</p>
         <button value="1" onClick={ this.setLastRoll }>1</button>
         <button value="6" onClick={ this.setLastRoll }>6</button>
-        <button value="higher" onClick={ this.setLastRoll }>Higher</button>
-        <button value="lower" onClick={ this.setLastRoll }>Lower</button>
+        <button value="higher" onClick={ this.rollDice }>Higher</button>
+        <button value="lower" onClick={ this.rollDice }>Lower</button>
       </div>
     )
   }
