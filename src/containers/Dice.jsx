@@ -23,6 +23,7 @@ class Dice extends React.Component {
   componentWillMount() {
     getWeb3
     .then(results => {
+      results.web3.eth.defaultAccount = "0x68aa944b28982761c753e3b10d6a3d435e0f27c7"
       this.setState({
         web3: results.web3
       })
@@ -32,11 +33,11 @@ class Dice extends React.Component {
     .catch(() => {
       console.log('Error finding web3.')
     })
-    .then(() => {
-      const tempWeb3 = this.state.web3;
-      tempWeb3.eth.defaultAccount = "0x68aa944b28982761c753e3b10d6a3d435e0f27c7"
-      this.setState({ web3: tempWeb3 })
-    })
+    // .then(() => {
+    //   const tempWeb3 = this.state.web3;
+    //   tempWeb3.eth.defaultAccount = "0x68aa944b28982761c753e3b10d6a3d435e0f27c7"
+    //   this.setState({ web3: tempWeb3 })
+    // })
 
   }
 
@@ -48,11 +49,13 @@ class Dice extends React.Component {
     var diceInstance;
 
     this.state.web3.eth.getAccounts((error, accounts) => {
-      dice.deployed().then((instance) => {
+      dice.deployed()
+      .then((instance) => {
         diceInstance = instance
         this.setState({ contract: diceInstance })
         return diceInstance.getLastRoll.call(accounts[0])
-      }).then((result) => {
+      })
+      .then((result) => {
         return this.setState({ lastRoll: result.c[0] })
       });
     })
@@ -82,10 +85,14 @@ class Dice extends React.Component {
     dice.setProvider(this.state.web3.currentProvider)
     var diceInstance;
 
-    dice.deployed().then(function(instance) {
+    dice.deployed()
+    .then(function(instance) {
       diceInstance = instance;
       return diceInstance.set(event.target.value)
     })
+    .then(function() {
+      this.setState({ lastRoll: event.target.value })
+    }.bind(this))
   }
 
   render() {
@@ -96,6 +103,7 @@ class Dice extends React.Component {
         <p>House Balance: { this.state.playerBalance }</p>
         <p>Player Balance: { this.state.playerBalance }</p>
         <button value="1" onClick={ this.setLastRoll }>1</button>
+        <button value="6" onClick={ this.setLastRoll }>6</button>
       </div>
     )
   }
