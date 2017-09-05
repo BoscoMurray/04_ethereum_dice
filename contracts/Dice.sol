@@ -19,4 +19,8 @@ contract Dice {
     return thisRoll;
   }
 
+  function getPreviousRoll() constant returns (uint) {
+    return previousRoll;
+  }
+
 }

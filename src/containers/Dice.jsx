@@ -1,5 +1,6 @@
 import React from 'react';
-import DiceContract from '../../build/contracts/Dice.json'
+import DiceContract from '../../build/contracts/Dice.json';
+import DiceRoll from '../components/DiceRoll.jsx';
 
 import getWeb3 from './../utils/getWeb3';
 
@@ -15,7 +16,9 @@ class Dice extends React.Component {
       web3: null,
       contract: null,
       previousRoll: 0,
+      previousImg: null,
       thisRoll: 0,
+      thisImg: null,
       winOrLose: "Let's Start",
       playerAddress: "0x39ba05291564d3f184c8ec24042f19a13b5b7d72",
       playerBalance: 0,
@@ -51,10 +54,18 @@ class Dice extends React.Component {
       .then((instance) => {
         diceInstance = instance
         this.setState({ contract: diceInstance })
-        return diceInstance.getThisRoll.call(accounts[0])
+        return diceInstance.getThisRoll.call()
       })
       .then((result) => {
+        this.setDiceImages(result.c[0], "this")
         this.setState({ thisRoll: result.c[0] })
+      })
+      .then(() => {
+        return diceInstance.getPreviousRoll.call()
+      })
+      .then((result) => {
+        this.setDiceImages(result.c[0], "previous")
+        this.setState({ previousRoll: result.c[0] })
       });
     })
   }
@@ -91,15 +102,15 @@ class Dice extends React.Component {
     const houseAddy = this.state.houseAddress;
 
     if ( (guess==="higher") && (result>this.state.thisRoll) ) {
-      this.setState({ winOrLose: "Winner! You got paid!" }, () => {
+      this.setState({ winOrLose: "Alright. We got a winner!" }, () => {
         this.pay(houseAddy, playerAddy, 2)
       })
     } else if ( (guess==="lower") && (result<this.state.thisRoll) ) {
-      this.setState({ winOrLose: "Winner! You got paid!" }, () => {
+      this.setState({ winOrLose: "Nice...you win." }, () => {
         this.pay(houseAddy, playerAddy, 2)
       })
     } else if (result===this.state.thisRoll) {
-      this.setState({ winOrLose: "Same number rolled again! Sorry, you still lose!" }, () => {
+      this.setState({ winOrLose: "Same again! House wins." }, () => {
         this.pay(playerAddy, houseAddy, 1)
       })
     } else {
@@ -121,26 +132,55 @@ class Dice extends React.Component {
     })
   }
 
-  setThisRoll(result) {
+  setThisRoll(roll) {
     dice.setProvider(this.state.web3.currentProvider)
 
     dice.deployed()
     .then((instance) => {
-      return this.state.contract.set(result)
+      this.state.contract.set(roll)
     })
-    .then((reply) => {
-      const thisRoll = this.state.thisRoll;
-      this.setState({ previousRoll: thisRoll })
-      this.setState({ thisRoll: result })
+    .then(() => {
+      return this.state.contract.getThisRoll.call();
     })
+    .then((result) => {
+      this.setDiceImages(result.c[0], "this")
+      this.setState({ thisRoll: result.c[0] })
+    })
+    .then(() => {
+      return this.state.contract.getPreviousRoll.call();
+    })
+    .then((result) => {
+      this.setDiceImages(result.c[0], "previous")
+      this.setState({ previousRoll: result.c[0] })
+    })
+  }
+
+  setDiceImages(number, whichDice) {
+    let location = "images/Dice" + number +".gif";
+
+    if (whichDice === "this") {
+      this.setState({ thisImg: location })
+    } else {
+      this.setState({ previousImg: location })
+    }
   }
 
   render() {
     return(
-      <div className='Dice'>
-        <h1>Smart-Dice</h1>
-        <p>Previous Roll: { this.state.previousRoll }</p>
-        <p>This Roll: { this.state.thisRoll }</p>
+      <div className='dice'>
+        <div id='background'>
+          <img src="images/diceBackground.gif" alt="background dice"/>
+        </div>
+        <DiceRoll 
+          previousRoll={ this.state.previousRoll } 
+          previousImg={ this.state.previousImg } 
+          thisRoll={ this.state.thisRoll } 
+          thisImg={ this.state.thisImg } >
+        </DiceRoll>
+        <Balances
+          houseBalance={ this.state.houseBalance } 
+          playerBalance={ this.state.playerBalance } >
+        </Balances>
         <p>House Balance: { this.state.houseBalance }</p>
         <p>Player Balance: { this.state.playerBalance }</p>
         <br></br>
