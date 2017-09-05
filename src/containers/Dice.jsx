@@ -24,8 +24,6 @@ class Dice extends React.Component {
     };
     this.setThisRoll = this.setThisRoll.bind(this);
     this.rollDice = this.rollDice.bind(this);
-    // this.pay = this.pay.bind(this);
-    // this.compareResult = this.compareResult.bind(this);
   }
 
   componentWillMount() {
@@ -56,7 +54,7 @@ class Dice extends React.Component {
         return diceInstance.getThisRoll.call(accounts[0])
       })
       .then((result) => {
-        return this.setState({ thisRoll: result.c[0] })
+        this.setState({ thisRoll: result.c[0] })
       });
     })
   }
@@ -64,8 +62,8 @@ class Dice extends React.Component {
   getBalances() {
     this.state.web3.eth.getBalance(this.state.playerAddress, (error, result) => {
       if(!error) {
-        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
-        return this.setState({ playerBalance: balance });
+        // const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        this.setState({ playerBalance: result.c[0] });
       } else {
         console.error(error);
       }
@@ -73,8 +71,8 @@ class Dice extends React.Component {
 
     this.state.web3.eth.getBalance(this.state.houseAddress, (error, result) => {
       if(!error) {
-        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
-        return this.setState({ houseBalance: balance });
+        // const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        this.setState({ houseBalance: result.c[0] });
       } else {
         console.error(error);
       }
@@ -90,34 +88,37 @@ class Dice extends React.Component {
 
   compareResult(guess, result) {
     const playerAddy = this.state.playerAddress;
-    const contractAddy = this.state.contract.address;
-    // const houseAddy = this.state.houseAddress;
+    const houseAddy = this.state.houseAddress;
 
     if ( (guess==="higher") && (result>this.state.thisRoll) ) {
       this.setState({ winOrLose: "Winner! You got paid!" }, () => {
-        this.pay(playerAddy, contractAddy, 10)
+        this.pay(houseAddy, playerAddy, 2)
       })
     } else if ( (guess==="lower") && (result<this.state.thisRoll) ) {
       this.setState({ winOrLose: "Winner! You got paid!" }, () => {
-        this.pay(playerAddy, contractAddy, 10)
+        this.pay(houseAddy, playerAddy, 2)
       })
     } else if (result===this.state.thisRoll) {
       this.setState({ winOrLose: "Same number rolled again! Sorry, you still lose!" }, () => {
-        this.pay(playerAddy, contractAddy, 10)
+        this.pay(playerAddy, houseAddy, 1)
       })
     } else {
       this.setState({ winOrLose: "Sorry...you lose." }, () => {
-        this.pay(playerAddy, contractAddy, 10)
+        this.pay(playerAddy, houseAddy, 1)
       })
     }
   }
 
   pay(payFrom, payTo, amount) {
-    this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: this.state.web3.toWei(amount, "ether")}, function(err, transactionHash) {
+    const number = this.state.web3.toWei(amount, "ether")
+
+    this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: number}, (err, transactionHash) => {
       if (!err) {
-        console.log(transactionHash);
+        this.getBalances()
+      } else {
+        console.log(err)
       }
-    });
+    })
   }
 
   setThisRoll(result) {
@@ -128,13 +129,10 @@ class Dice extends React.Component {
       return this.state.contract.set(result)
     })
     .then((reply) => {
-      console.log(reply)
       const thisRoll = this.state.thisRoll;
       this.setState({ previousRoll: thisRoll })
       this.setState({ thisRoll: result })
     })
-    console.log(this.state.contract.address)
-
   }
 
   render() {
