@@ -1,6 +1,7 @@
 import React from 'react';
 import DiceContract from '../../build/contracts/Dice.json';
 import DiceRoll from '../components/DiceRoll.jsx';
+import Balances from '../components/Balances.jsx';
 
 import getWeb3 from './../utils/getWeb3';
 
@@ -73,8 +74,8 @@ class Dice extends React.Component {
   getBalances() {
     this.state.web3.eth.getBalance(this.state.playerAddress, (error, result) => {
       if(!error) {
-        // const balance = this.state.web3.fromWei(result.c[0], 'kwei');
-        this.setState({ playerBalance: result.c[0] });
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        this.setState({ playerBalance: Math.floor(balance) });
       } else {
         console.error(error);
       }
@@ -82,8 +83,8 @@ class Dice extends React.Component {
 
     this.state.web3.eth.getBalance(this.state.houseAddress, (error, result) => {
       if(!error) {
-        // const balance = this.state.web3.fromWei(result.c[0], 'kwei');
-        this.setState({ houseBalance: result.c[0] });
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        this.setState({ houseBalance: Math.floor(balance) });
       } else {
         console.error(error);
       }
@@ -181,9 +182,6 @@ class Dice extends React.Component {
           houseBalance={ this.state.houseBalance } 
           playerBalance={ this.state.playerBalance } >
         </Balances>
-        <p>House Balance: { this.state.houseBalance }</p>
-        <p>Player Balance: { this.state.playerBalance }</p>
-        <br></br>
         <p> {this.state.winOrLose} </p>
         <button value="higher" onClick={ this.rollDice }>Higher</button>
         <button value="lower" onClick={ this.rollDice }>Lower</button>
