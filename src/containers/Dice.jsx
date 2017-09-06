@@ -2,6 +2,7 @@ import React from 'react';
 import DiceContract from '../../build/contracts/Dice.json';
 import DiceRoll from '../components/DiceRoll.jsx';
 import Balances from '../components/Balances.jsx';
+import LetsRoll from '../components/LetsRoll.jsx';
 
 import getWeb3 from './../utils/getWeb3';
 
@@ -20,7 +21,7 @@ class Dice extends React.Component {
       previousImg: null,
       thisRoll: 0,
       thisImg: null,
-      winOrLose: "Let's Start",
+      winOrLose: "Let's Roll - Guess Higher or Lower",
       playerAddress: "0x39ba05291564d3f184c8ec24042f19a13b5b7d72",
       playerBalance: 0,
       houseAddress: "0x90510cec7e77d80cd6f60804b3ca556935cbcc8d",
@@ -178,13 +179,14 @@ class Dice extends React.Component {
           thisRoll={ this.state.thisRoll } 
           thisImg={ this.state.thisImg } >
         </DiceRoll>
+        <LetsRoll 
+          winOrLose={ this.state.winOrLose } 
+          rollDice={ this.rollDice } >
+        </LetsRoll>
         <Balances
           houseBalance={ this.state.houseBalance } 
           playerBalance={ this.state.playerBalance } >
         </Balances>
-        <p> {this.state.winOrLose} </p>
-        <button value="higher" onClick={ this.rollDice }>Higher</button>
-        <button value="lower" onClick={ this.rollDice }>Lower</button>
       </div>
     )
   }
