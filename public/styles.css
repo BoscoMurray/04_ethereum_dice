@@ -4,12 +4,6 @@ body {
   padding: 0;
 }
 
-/*.dice {
-  overflow: auto;
-  margin: auto;
-  width: 916px;
-}*/
-
 #background {
   margin: auto;
   width: 75%;
@@ -30,9 +24,9 @@ body {
 
 #previous-roll, #this-roll {
   display: block;
-  width: 150px;
+  width: 140px;
   float: left;
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 #previous-roll img {
@@ -44,5 +38,33 @@ body {
 }
 
 #lets-roll {
-  
+  margin: auto;
+  width: 75%;
+  /*border: solid;*/
+  text-align: center;
+}
+
+#buttons {
+  /*border: solid;*/
+  padding-top: 30px;
+  padding-bottom: 10px;
+  margin: 0 auto;
+  width: 75%;
+  height: 30px;
+}
+
+button {
+  background-color: #555555;
+  color: white;
+  border: none;
+  font-size: 16px;
+  padding: 8px 15px;
+}
+
+#higher, #lower {
+  display: inline-block;
+}
+
+#lower {
+  margin-left: 10px;
 }
