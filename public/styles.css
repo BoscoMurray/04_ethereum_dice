@@ -42,6 +42,7 @@ body {
   width: 75%;
   /*border: solid;*/
   text-align: center;
+  font-size: 24px;
 }
 
 #buttons {
@@ -66,5 +67,24 @@ button {
 }
 
 #lower {
-  margin-left: 10px;
+  margin-left: 50px;
+}
+
+#balances {
+  /*border: solid;*/
+  margin: auto;
+  width: 75%;
+  text-align: center;
+  font-size: 24px;
+}
+
+#player-balance, #house-balance {
+  display: inline-block;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+#house-balance {
+  margin-left: 30px;
 }

@@ -5,8 +5,14 @@ class Balances extends React.Component {
   render() {
     return(
       <div id="balances">
-        <p>House Balance: { this.props.houseBalance } Ethereum</p>
-        <p>Player Balance: { this.props.playerBalance } Ethereum</p>
+        <div id="player-balance">
+          <p>Your Ethereum</p>
+          <p>{ this.props.playerBalance }</p>
+        </div>
+        <div id="house-balance">
+          <p>House Ethereum</p>
+          <p>{ this.props.houseBalance }</p>
+        </div>
       </div>
     )
   }
