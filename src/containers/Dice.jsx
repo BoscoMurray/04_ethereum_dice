@@ -75,7 +75,7 @@ class Dice extends React.Component {
   getBalances() {
     this.state.web3.eth.getBalance(this.state.playerAddress, (error, result) => {
       if(!error) {
-        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei')/10;
         this.setState({ playerBalance: Math.floor(balance) });
       } else {
         console.error(error);
@@ -84,7 +84,7 @@ class Dice extends React.Component {
 
     this.state.web3.eth.getBalance(this.state.houseAddress, (error, result) => {
       if(!error) {
-        const balance = this.state.web3.fromWei(result.c[0], 'kwei');
+        const balance = this.state.web3.fromWei(result.c[0], 'kwei')/10;
         this.setState({ houseBalance: Math.floor(balance) });
       } else {
         console.error(error);
@@ -95,8 +95,8 @@ class Dice extends React.Component {
   rollDice(event) {
     const guess = event.target.value;
     const result = Math.floor((Math.random() * 6) + 1);
-    this.compareResult(guess, result);
     this.setThisRoll(result);
+    this.compareResult(guess, result);
   }
 
   compareResult(guess, result) {
@@ -123,10 +123,11 @@ class Dice extends React.Component {
   }
 
   pay(payFrom, payTo, amount) {
-    const number = this.state.web3.toWei(amount, "ether")
+    const number = this.state.web3.toWei(amount, "ether") 
 
     this.state.web3.eth.sendTransaction({from: payFrom, to: payTo, value: number}, (err, transactionHash) => {
       if (!err) {
+        console.log("Transaction Hash: " + transactionHash)
         this.getBalances()
       } else {
         console.log(err)
@@ -142,9 +143,11 @@ class Dice extends React.Component {
       this.state.contract.set(roll)
     })
     .then(() => {
+      console.log("Set ThisRoll in the contract: " + roll)
       return this.state.contract.getThisRoll.call();
     })
     .then((result) => {
+      console.log(result)
       this.setDiceImages(result.c[0], "this")
       this.setState({ thisRoll: result.c[0] })
     })

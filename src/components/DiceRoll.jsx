@@ -3,7 +3,6 @@ import React from 'react';
 class DiceRoll extends React.Component {
 
   render() {
-    console.log(this.props.previousImg)
     return(
       <div className="dice-roll">
         <div id="inner-dice">
