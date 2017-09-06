@@ -170,7 +170,7 @@ class Dice extends React.Component {
     return(
       <div className='dice'>
         <div id='background'>
-          <img src="images/diceBackground.gif" alt="background dice"/>
+          <img id="backgroundImg" src="images/diceBackground.gif" alt="background dice"/>
         </div>
         <DiceRoll 
           previousRoll={ this.state.previousRoll } 

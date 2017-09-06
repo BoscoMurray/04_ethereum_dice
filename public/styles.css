@@ -1,0 +1,57 @@
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/*.dice {
+  overflow: auto;
+  margin: auto;
+  width: 916px;
+}*/
+
+#background {
+  margin: auto;
+  width: 75%;
+  max-width: 400px;
+}
+
+#backgroundImg {
+  display: block;
+  margin: auto;
+  width: 75%;
+}
+
+#inner-dice {
+  display: table;
+  margin: 0 auto;
+  border: solid;
+}
+
+#previous-roll, #this-roll {
+  display: block;
+  margin: 0 2px;
+  width: 150px;
+  float: left;
+}
+
+/*#this-roll {
+  margin: 0 2px;
+}*/
+
+/*.pagination a {
+  display: block;
+  width: 30px;
+  height: 30px;
+  float: left;
+  margin-left: 3px;
+  background: url(/images/structure/pagination-button.png);
+}*/
+
+#previous-roll img {
+  height: 40px;
+}
+
+#this-roll img {
+  height: 120px;
+}
