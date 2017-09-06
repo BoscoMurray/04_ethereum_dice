@@ -103,7 +103,7 @@ class Dice extends React.Component {
     const houseAddy = this.state.houseAddress;
 
     if ( (guess==="higher") && (result>this.state.thisRoll) ) {
-      this.setState({ winOrLose: "Alright. We got a winner!" }, () => {
+      this.setState({ winOrLose: "Alright. We've got a winner!" }, () => {
         this.pay(houseAddy, playerAddy, 2)
       })
     } else if ( (guess==="lower") && (result<this.state.thisRoll) ) {
